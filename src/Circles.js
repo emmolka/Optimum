@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import * as d3 from "d3";
 import "./App.css";
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
-const DetailsTop = React.memo(props => {
+const Circles = React.memo(props => {
   const [nodes, setNodes] = useState(
     d3.range(5).map(function(d) {
       return { radius: Math.random() * 10 + 40 };
@@ -11,7 +11,7 @@ const DetailsTop = React.memo(props => {
   const [gravity, setGravity] = useState("5");
   const [showSign, setShowSign] = useState(true);
 
-  const width = 500;
+  const width = 400;
   const height = 500;
   //removes last
   function remove() {
@@ -21,8 +21,8 @@ const DetailsTop = React.memo(props => {
   const svg = d3
     .select(".svg")
     .append("svg")
-    .attr("width", 500)
-    .attr("height", 500);
+    .attr("width", width)
+    .attr("height", height);
 
   // drawing the circles
 
@@ -117,6 +117,7 @@ const DetailsTop = React.memo(props => {
             nodes.pop();
             setNodes([...nodes]);
             remove();
+            setShowSign(false);
             // draw();
           }}
         ></IoIosRemove>
@@ -145,4 +146,4 @@ const DetailsTop = React.memo(props => {
   );
 });
 
-export default DetailsTop;
+export default Circles;

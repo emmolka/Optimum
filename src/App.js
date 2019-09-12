@@ -1,9 +1,9 @@
 import React from "react";
-import Circle from "./Circle";
+import Circles from "./Circles";
 function App() {
   return (
     <div className="App">
-      <Circle></Circle>
+      <Circles></Circles>
     </div>
   );
 }
