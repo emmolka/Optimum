@@ -1,68 +1,103 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import * as d3 from "d3";
 import "./App.css";
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 const DetailsTop = React.memo(props => {
   const [nodes, setNodes] = useState(
     d3.range(5).map(function(d) {
-      return { radius: Math.random() * 25 + 10 };
+      return { radius: Math.random() * 10 + 40 };
     })
   );
   const [gravity, setGravity] = useState("5");
+  const [showSign, setShowSign] = useState(true);
 
-  var width = 400,
-    height = 400;
-
-  function draw() {
-    var simulation = d3
-      .forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(gravity))
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force(
-        "collision",
-        d3.forceCollide().radius(function(d) {
-          return d.radius;
-        })
-      )
-      .on("tick", ticked);
-
-    function ticked() {
-      var u = d3
-        .select(".svg")
-        .selectAll("circle")
-        .data(nodes);
-
-      u.enter()
-        .append("circle")
-        .attr("r", function(d) {
-          return d.radius;
-        })
-        .merge(u)
-        .attr("cx", function(d) {
-          return d.x;
-        })
-        .attr("cy", function(d) {
-          return d.y;
-        })
-        .attr("fill", "white");
-
-      u.exit().remove();
-    }
+  const width = 500;
+  const height = 500;
+  //removes last
+  function remove() {
+    svg.remove();
   }
-  draw();
+  // adds the svg element
+  const svg = d3
+    .select(".svg")
+    .append("svg")
+    .attr("width", 500)
+    .attr("height", 500);
 
-  // const simulation = d3
-  //   .forceSimulation(circles)
-  //   .force("charge", d3.forceManyBody().strength(5))
-  //   .force("center", d3.forceCenter(50 / 2, 50 / 2))
-  //   .force(
-  //     "collision",
-  //     d3.forceCollide().radius(function(d) {
-  //       return d.radius;
-  //     })
-  //   );
-  // }
-  // const circles = [];
+  // drawing the circles
+
+  const drawCircles = svg
+    .append("g")
+    .selectAll("circle")
+    .data(nodes)
+    .enter()
+    .append("circle")
+    .attr("r", function(d) {
+      return d.radius;
+    })
+    .attr("cx", width / 2)
+    .attr("cy", height / 2)
+    .style("fill", "#69a2b2");
+
+  // drawing the text
+  const drawText = svg
+    .append("g")
+    .selectAll("text")
+    .data(nodes)
+    .enter()
+    .append("text")
+    .attr("text-anchor", "middle")
+    .text("Lorem ipsum")
+    .attr("font-size", function(d) {
+      return d.radius * 0.3;
+    })
+    .attr("r", 25)
+    .attr("x", width / 2)
+    .attr("y", height / 2)
+    .style("fill", "#eee");
+
+  //forces for the circles
+  const simulationCircles = d3
+    .forceSimulation(nodes)
+    .force("charge", d3.forceManyBody().strength(gravity))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force(
+      "collision",
+      d3.forceCollide().radius(function(d) {
+        return d.radius;
+      })
+    );
+  //forces for the text
+  const simulationText = d3
+    .forceSimulation(nodes)
+    .force("charge", d3.forceManyBody().strength(5))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force(
+      "collision",
+      d3.forceCollide().radius(function(d) {
+        return d.radius;
+      })
+    );
+  //simulation for the circles
+  simulationCircles.nodes(nodes).on("tick", function(d) {
+    drawCircles
+      .attr("cx", function(d) {
+        return d.x;
+      })
+      .attr("cy", function(d) {
+        return d.y;
+      });
+  });
+  //simulation for the text
+  simulationText.nodes(nodes).on("tick", function(d) {
+    drawText
+      .attr("x", function(d) {
+        return d.x;
+      })
+      .attr("y", function(d) {
+        return d.y;
+      });
+  });
 
   return (
     <div className="box">
@@ -70,9 +105,10 @@ const DetailsTop = React.memo(props => {
         <IoIosAdd
           className="icon"
           onClick={() => {
-            nodes.push({ radius: Math.random() * 25 + 10 });
+            nodes.push({ radius: Math.random() * 10 + 40 });
             setNodes([...nodes]);
-            draw();
+            setShowSign(false);
+            remove();
           }}
         ></IoIosAdd>
         <IoIosRemove
@@ -80,22 +116,28 @@ const DetailsTop = React.memo(props => {
           onClick={() => {
             nodes.pop();
             setNodes([...nodes]);
-            draw();
+            remove();
+            // draw();
           }}
         ></IoIosRemove>
       </div>
       <div className="wrapper ">
+        <div className="show-sign">
+          {showSign ? <p>Click any button to start</p> : <div></div>}
+        </div>
         <svg className="svg"></svg>
       </div>
       <div className="wrapper">
+        <p className="gravity-sign">Gravity</p>
         <input
           type="range"
-          min="-20"
-          max="20"
+          min="-100"
+          max="100"
           value={gravity}
           onChange={event => {
             setGravity(event.target.value);
-            draw();
+            remove();
+            setShowSign(false);
           }}
         ></input>
       </div>
