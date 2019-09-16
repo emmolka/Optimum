@@ -10,7 +10,12 @@ const Circles = React.memo(props => {
   );
   const [gravity, setGravity] = useState("5");
   const [showSign, setShowSign] = useState(true);
-
+  console.log(
+    d3.range(5).map(function(d) {
+      return { radius: Math.random() * 10 + 40 };
+    }),
+    nodes
+  );
   const width = 400;
   const height = 500;
   //removes last
@@ -35,8 +40,6 @@ const Circles = React.memo(props => {
     .attr("r", function(d) {
       return d.radius;
     })
-    .attr("cx", width / 2)
-    .attr("cy", height / 2)
     .style("fill", "#69a2b2");
 
   // drawing the text
@@ -51,9 +54,7 @@ const Circles = React.memo(props => {
     .attr("font-size", function(d) {
       return d.radius * 0.3;
     })
-    .attr("r", 25)
-    .attr("x", width / 2)
-    .attr("y", height / 2)
+    // .attr("r", 25)
     .style("fill", "#eee");
 
   //forces for the circles
@@ -70,7 +71,7 @@ const Circles = React.memo(props => {
   //forces for the text
   const simulationText = d3
     .forceSimulation(nodes)
-    .force("charge", d3.forceManyBody().strength(5))
+    .force("charge", d3.forceManyBody().strength(gravity))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force(
       "collision",
@@ -78,7 +79,7 @@ const Circles = React.memo(props => {
         return d.radius;
       })
     );
-  //simulation for the circles
+  //  simulation for the circles
   simulationCircles.nodes(nodes).on("tick", function(d) {
     drawCircles
       .attr("cx", function(d) {

@@ -1,8 +1,5 @@
 body {
   background-color: #1561ad;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .wrapper {
@@ -10,12 +7,14 @@ body {
   align-items: center;
   justify-content: center;
 }
+
 svg {
   background-color: #093766;
   width: 100vw;
   height: 500px;
   max-width: 400px;
 }
+
 .icon {
   width: 50px;
   height: 50px;
