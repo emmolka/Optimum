@@ -11,8 +11,14 @@ body {
 svg {
   background-color: #093766;
   width: 100vw;
-  height: 500px;
-  max-width: 400px;
+  height: 100vh;
+  max-width: 1000px;
+}
+rect {
+  z-index: 100;
+}
+line {
+  z-index: 1;
 }
 
 .icon {
