@@ -8,10 +8,12 @@ body {
   justify-content: center;
 }
 
-svg {
+.svg {
   background-color: #093766;
   width: 100vw;
-  height: 100vh;
+  height: 50vw;
+  min-height: 500px;
+  max-height: 700px;
   max-width: 1000px;
 }
 rect {
@@ -45,5 +47,12 @@ line {
   left: 50%;
   transform: translateX(-50%);
   top: 20%;
+  color: white;
+}
+.download-button {
+  width: 100px;
+  height: 50px;
+  background-color: #135e8a;
+  border: none;
   color: white;
 }
