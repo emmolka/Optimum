@@ -6,7 +6,11 @@ import { IoIosAdd, IoIosRemove } from "react-icons/io";
 const Circles = React.memo(props => {
   const [nodes, setNodes] = useState(
     d3.range(5).map(function(d) {
-      return { radius: Math.random() * 10 + 40, x: 100, y: 100 };
+      return {
+        radius: Math.random() * 10 + 40,
+        x: Math.random() * 90 + 300,
+        y: Math.random() * 90 + 200
+      };
     })
   );
   const [gravity, setGravity] = useState("5");
@@ -18,91 +22,79 @@ const Circles = React.memo(props => {
 
   const width = windowSize.width;
   const height = windowSize.height;
-  //removes last
 
   // adds the svg element
-  // useEffect(() => {
   const svg = d3
     .select(".svg")
-
     .attr("width", width)
     .attr("height", height);
-
-  // drawing the circles
-
-  const drawCircles = svg
-    // .append("g")
-    .selectAll("circle")
-    .data(nodes)
-    // .enter()
-    // .append("circle")
-    .attr("r", function(d) {
-      return d.radius;
-    })
-    .style("fill", "#69a2b2");
-
   svg.call(
     d3.zoom().on("zoom", function() {
       d3.select("g").attr("transform", d3.event.transform);
     })
   );
-  // drawing the text
-  const drawText = svg
-    // .append("g")
-    .selectAll("text")
-    .data(nodes)
-    // .enter()
-    // .append("text")
-    .attr("text-anchor", "middle")
-    .text("Lorem ipsum")
-    .attr("font-size", function(d) {
-      return d.radius * 0.3;
-    })
-    // .attr("r", 25)
-    .style("fill", "#eee");
+
+  // const draw = svg.selectAll("g");
 
   //forces for the circles
   const simulationCircles = d3
     .forceSimulation(nodes)
-    .force("charge", d3.forceManyBody().strength(gravity));
-  // .force("center", d3.forceCenter(width / 2, height / 2))
-  // .force(
-  //   "collision",
-  //   d3.forceCollide().radius(function(d) {
-  //     return d.radius;
-  //   })
-  // );
-  //forces for the text
-  const simulationText = d3
-    .forceSimulation(nodes)
     .force("charge", d3.forceManyBody().strength(gravity))
-    .force("center", d3.forceCenter(width / 5, height / 5))
+    // .force("center", d3.forceCenter(width / 2, height / 2))
     .force(
       "collision",
       d3.forceCollide().radius(function(d) {
         return d.radius;
       })
     );
-  //  simulation for the circles
+  // //forces for the text
+  // const simulationText = d3
+  //   .forceSimulation(nodes)
+  //   .force("charge", d3.forceManyBody().strength(gravity))
+  //   .force("center", d3.forceCenter(width / 5, height / 5))
+  //   .force(
+  //     "collision",
+  //     d3.forceCollide().radius(function(d) {
+  //       return d.radius;
+  //     })
+  //   );
+  // //  simulation for the circles
   simulationCircles.nodes(nodes).on("tick", function(d) {
-    drawCircles
+    d3.selectAll("circle")
+      .data(nodes)
       .attr("cx", function(d) {
         return d.x;
       })
       .attr("cy", function(d) {
         return d.y;
       });
-  });
-  //simulation for the text
-  simulationText.nodes(nodes).on("tick", function(d) {
-    drawText
+    d3.selectAll("text")
+      .data(nodes)
       .attr("x", function(d) {
         return d.x;
       })
       .attr("y", function(d) {
         return d.y;
       });
+    // console.log(d);
+    // d3.selectAll("circle")
+    //   .attr("cx", function(d) {
+    //     return d.x;
+    //   })
+    //   .attr("cy", function(d) {
+    //     return d.y;
+    //   });
   });
+  // //simulation for the text
+  // simulationText.nodes(nodes).on("tick", function(d) {
+  //   drawText
+  //     .attr("x", function(d) {
+  //       return d.x;
+  //     })
+  //     .attr("y", function(d) {
+  //       return d.y;
+  //     });
+  // });
   // });
   return (
     <div className="box">
@@ -110,7 +102,11 @@ const Circles = React.memo(props => {
         <IoIosAdd
           className="icon"
           onClick={() => {
-            nodes.push({ radius: Math.random() * 10 + 40 });
+            nodes.push({
+              radius: Math.random() * 10 + 40,
+              x: Math.random() * 90 + 100,
+              y: Math.random() * 90 + 100
+            });
             setNodes([...nodes]);
             setShowSign(false);
           }}
@@ -127,26 +123,37 @@ const Circles = React.memo(props => {
         ></IoIosRemove>
       </div>
       <div className="wrapper">
-        <button
-          className="download-button"
-          onClick={showSign ? null : props.click}
-        >
+        <button className="download-button" onClick={props.click}>
           Download pdf
         </button>
       </div>
       <div className="wrapper ">
         <div className="show-sign">
-          {showSign ? <p>Click any button to start</p> : <div></div>}
+          {showSign ? <p>Click any button to start</p> : null}
         </div>
         <svg className="svg" id="svg">
-          <g>
-            {nodes.map(el => (
-              <g>
-                <circle></circle>
-                <text></text>
-              </g>
-            ))}
-          </g>
+          {showSign ? null : (
+            <g>
+              {nodes.map(el => (
+                <g>
+                  <circle
+                    r={el.radius}
+                    cx={el.x}
+                    cy={el.y}
+                    fill="#69a2b2"
+                  ></circle>
+                  <text
+                    x={el.x}
+                    y={el.y}
+                    fontSize={el.radius * 0.3}
+                    textAnchor="middle"
+                  >
+                    Lorem ipsum
+                  </text>
+                </g>
+              ))}
+            </g>
+          )}
         </svg>
       </div>
       <div className="wrapper">
@@ -158,8 +165,7 @@ const Circles = React.memo(props => {
           value={gravity}
           onChange={event => {
             setGravity(event.target.value);
-
-            // setShowSign(false);
+            setShowSign(false);
           }}
         ></input>
       </div>
